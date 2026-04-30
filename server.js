@@ -35,11 +35,14 @@ app.get('/states', async (req, res) => {
 
     const mongoStates = await State.find();
 
-    data.forEach(state => {
+    data = data.map(state => {
         const match = mongoStates.find(m => m.stateCode === state.code);
-        if (match) {
-            state.funfacts = match.funfacts;
+
+        if (match && match.funfacts && match.funfacts.length > 0) {
+            return { ...state, funfacts: match.funfacts };
         }
+
+        return state;
     });
 
     if (req.query.contig === 'true') {
@@ -78,7 +81,7 @@ app.get('/states/:state/funfact', async (req, res) => {
 });
 
 // GET single state by abbreviation
-app.get('/states/:state', (req, res) => {
+app.get('/states/:state', async (req, res) => {
     const stateCode = req.params.state.toUpperCase();
 
     const state = statesData.find(st => st.code === stateCode);
@@ -87,7 +90,15 @@ app.get('/states/:state', (req, res) => {
         return res.status(404).json({ message: 'Invalid state abbreviation parameter' });
     }
 
-    res.json(state);
+    const mongoState = await State.findOne({ stateCode });
+
+    let response = { ...state };
+
+    if (mongoState && mongoState.funfacts && mongoState.funfacts.length > 0) {
+        response.funfacts = mongoState.funfacts;
+    }
+
+    res.json(response);
 });
 
 app.get('/states/:state/capital', (req, res) => {
