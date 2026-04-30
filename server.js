@@ -94,9 +94,9 @@ app.get('/states/:state', async (req, res) => {
 
     let response = { ...state };
 
-    if (mongoState && mongoState.funfacts && mongoState.funfacts.length > 0) {
-        response.funfacts = mongoState.funfacts;
-    }
+    if (mongoState) {
+    response.funfacts = mongoState.funfacts;
+}
 
     res.json(response);
 });
@@ -131,7 +131,10 @@ app.get('/states/:state/population', (req, res) => {
         return res.status(404).json({ message: 'Invalid state abbreviation parameter' });
     }
 
-    res.json({ state: state.state, population: state.population });
+    res.json({
+        state: state.state,
+        population: Number(state.population).toLocaleString('en-US')
+    });
 });
 
 app.get('/states/:state/admission', (req, res) => {
