@@ -205,9 +205,13 @@ app.patch('/states/:state/funfact', async (req, res) => {
 
     const mongoState = await State.findOne({ stateCode });
 
-    if (!mongoState || !mongoState.funfacts || mongoState.funfacts.length < index) {
-        return res.status(400).json({ message: `No Fun Fact found at that index for ${state.state}` });
+    if (!mongoState || !mongoState.funfacts || mongoState.funfacts.length === 0) {
+    return res.json({ message: `No Fun Facts found for ${state.state}` });
     }
+
+    if (mongoState.funfacts.length < index) {
+    return res.json({ message: `No Fun Fact found at that index for ${state.state}` });
+}
 
     mongoState.funfacts[index - 1] = funfact;
     await mongoState.save();
@@ -234,9 +238,12 @@ app.delete('/states/:state/funfact', async (req, res) => {
 
     const mongoState = await State.findOne({ stateCode });
 
-    if (!mongoState || !mongoState.funfacts || mongoState.funfacts.length < index) {
-        return res.status(400).json({ message: `No Fun Fact found at that index for ${state.state}` });
-    }
+    if (!mongoState || !mongoState.funfacts || mongoState.funfacts.length === 0) {
+    return res.json({ message: `No Fun Facts found for ${state.state}` });
+}
+    if (mongoState.funfacts.length < index) {
+    return res.json({ message: `No Fun Fact found at that index for ${state.state}` });
+}
 
     mongoState.funfacts.splice(index - 1, 1);
     await mongoState.save();
