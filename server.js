@@ -94,8 +94,9 @@ app.get('/states/:state', async (req, res) => {
 
     let response = { ...state };
 
-    if (mongoState && mongoState.funfacts && mongoState.funfacts.length > 0) {
+    if (mongoState && mongoState.funfacts) {
     response.funfacts = mongoState.funfacts;
+
 }
 
     res.json(response);
